@@ -1,10 +1,17 @@
 package com.joaohhenriq.kotlin_note_app
 
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.SearchView
+import android.widget.Toast
 import com.joaohhenriq.kotlin_note_app.model.NoteModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.card_component.view.*
@@ -18,6 +25,37 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         loadInitialData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+
+        val searcMenu = menu?.findItem(R.id.search_note)?.actionView as SearchView
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searcMenu.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searcMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Toast.makeText(applicationContext, query, Toast.LENGTH_LONG).show()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.addNote -> {
+                var intent = Intent(this, AddNote::class.java)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun loadInitialData() {
